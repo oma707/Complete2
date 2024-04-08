@@ -42,14 +42,37 @@ struct Quakes: View {
                     hasError = true
                 }
             }
+            // Add the button in the bottom right corner
+            .overlay(
+                Button(action: {
+                    openTableViewController()
+                }) {
+                    Image(systemName: "square.and.pencil")
+                        .font(.title)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .clipShape(Circle())
+                }
+                .padding(.bottom, 20)
+                .padding(.trailing, 20),
+                alignment: .bottomTrailing
+            )
         }
         .task {
             try? await provider.fetchQuakes()
         }
     }
-}
-
-extension Quakes {
+    
+    func openTableViewController() {
+        // Code to open the TableViewController file
+        // This code assumes TableViewController is a Swift file in the same project
+        guard let url = URL(string: "TableViewController.swift") else {
+            return
+        }
+        UIApplication.shared.open(url)
+    }
+    
     var title: String {
         if selectMode.isActive || selection.isEmpty {
             return "Earthquakes"
