@@ -20,6 +20,8 @@ struct Quakes: View {
     @State private var error: QuakeError?
     @State private var hasError = false
 
+    @State private var isShowingStations = false // New state for showing stations tab
+
     var body: some View {
         NavigationView {
             List(selection: $selection) {
@@ -42,37 +44,31 @@ struct Quakes: View {
                     hasError = true
                 }
             }
-            // Add the button in the bottom right corner
-            .overlay(
-                Button(action: {
-                    openTableViewController()
-                }) {
-                    Image(systemName: "square.and.pencil")
-                        .font(.title)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .clipShape(Circle())
-                }
-                .padding(.bottom, 20)
-                .padding(.trailing, 20),
-                alignment: .bottomTrailing
-            )
         }
         .task {
             try? await provider.fetchQuakes()
         }
-    }
-    
-    func openTableViewController() {
-        // Code to open the TableViewController file
-        // This code assumes TableViewController is a Swift file in the same project
-        guard let url = URL(string: "TableViewController.swift") else {
-            return
+        .sheet(isPresented: $isShowingStations) {
+            ContentView() // Replace StationsListView with your actual view for stations
         }
-        UIApplication.shared.open(url)
+        .overlay(
+            Button(action: {
+                isShowingStations.toggle()
+            }, label: {
+                Image(systemName: "list.bullet.rectangle")
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .clipShape(Circle())
+            })
+            .padding(.trailing)
+            .padding(.bottom)
+            , alignment: .bottomTrailing
+        )
     }
-    
+}
+
+extension Quakes {
     var title: String {
         if selectMode.isActive || selection.isEmpty {
             return "Earthquakes"
