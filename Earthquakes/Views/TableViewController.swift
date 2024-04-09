@@ -1,99 +1,80 @@
-//
-//  TableViewController.swift
-//  Earthquakes
-//
-//  Created by Omar Issentayev on 31.03.2024.
-//  Copyright © 2024 Apple. All rights reserved.
-//
-
 import SwiftUI
 
+struct Station: Identifiable, Hashable {
+    let id = UUID()
+    let name: String
+    let ipAddress: String
+    let port: Int
+}
+
 struct ContentView: View {
-    let stationSources = [
-        ("BGR", "https://eida.bgr.de/fdsnws/station/1/"),
-        ("KNMI", "http://rdsa.knmi.nl/fdsnws/station/1/"),
-        ("KOERI", "http://eida-service.koeri.boun.edu.tr/fdsnws/station/1/"),
-        ("ETHZ", "http://eida.ethz.ch/fdsnws/station/1/"),
-        ("GEOFON, GFZ", "https://geofon.gfz-potsdam.de/fdsnws/station/1/"),
-        ("ICGC", "http://ws.icgc.cat/fdsnws/station/1/"),
-        ("IPGP", "http://ws.ipgp.fr/fdsnws/station/1/"),
-        ("INGV", "http://webservices.ingv.it/fdsnws/station/1/"),
-        ("LMU", "http://erde.geophysik.uni-muenchen.de/fdsnws/station/1/"),
-        ("NIEP", "https://eida-sc3.infp.ro/fdsnws/station/1/"),
-        ("NOA", "http://eida.gein.noa.gr/fdsnws/station/1/"),
-        ("ORFEUS", "http://www.orfeus-eu.org/fdsnws/station/1/"),
-        ("RESIF", "http://ws.resif.fr/fdsnws/station/1/"),
-        ("IRIS DMC", "http://service.iris.edu/fdsnws/station/1/"),
-        ("NCEDC", "https://service.ncedc.org/fdsnws/station/1/"),
-        ("SCEDC", "http://service.scedc.caltech.edu/fdsnws/station/1/"),
-        ("TexNet", "http://rtserve.beg.utexas.edu/fdsnws/station/1/"),
-        ("USP-IAG", "http://seisrequest.iag.usp.br/fdsnws/station/1/"),
-        ("BMKG", "https://geof.bmkg.go.id/fdsnws/station/1/"),
-        ("AusPass", "https://auspass.edu.au:8080/fdsnws/station/1/"),
-        ("ESM", "https://esm-db.eu/fdsnws/station/1/"),
-        ("GeoNet", "https://service.geonet.org.nz/fdsnws/station/1/"),
-        ("Haiti", "https://ayiti.unice.fr/ayiti-seismes/fdsnws/station/1/"),
-        ("SismoAzur", "https://sismoazur.oca.eu/fdsnws/station/1/")
-    ]
+    @State private var selectedStation: Station?
     
-    let seedlinkNetworks = [
-        ("AusPass", "auspass.edu.au", 18000),
-        ("GEOFON, GFZ", "geofon.gfz-potsdam.de", 18000),
-        ("GEONET", "link.geonet.org.nz", 18000),
-        ("IDA Project", "rtserve.ida.ucsd.edu", 18000),
-        ("IFZ", "data.ifz.ru", 18000),
-        ("IRIS DMC", "rtserve.iris.washington.edu", 18000),
-        ("IRIS Jamaseis", "jamaseis.iris.edu", 18000),
-        ("ISNET - UNINA Università degli Studi di Napoli Federico II", "185.15.171.86", 18000),
-        ("OBSEBRE", "obsebre.es", 18000),
-        ("OGS", "nam.ogs.it", 18000),
-        ("Oklahoma University", "rtserve.ou.edu", 18000),
-        ("Red Sìsmica Baru", "helis.redsismicabaru.com", 18000),
-        ("RESIF", "rtserve.resif.fr", 18000),
-        ("SCSN-USC (South Carolina Seismic Network)", "eeyore.seis.sc.edu", 6382),
-        ("Seisme IRD", "rtserve.ird.nc", 18000),
-        ("SNAC NOA", "snac.gein.noa.gr", 18000),
-        ("UFRN (Universidade Federal do Rio Grande do Norte)", "sislink.geofisica.ufrn.br", 18000),
-        ("Universidade de Évora", "clv-cge.uevora.pt", 18000),
-        ("UPR", "worm.uprm.edu", 18000),
-        ("NRCAN", "earthquakescanada.nrcan.gc.ca", 18000),
-        ("USGS", "cwbpub.cr.usgs.gov", 18000),
-        ("BGR", "eida.bgr.de", 18000),
-        ("ENS", "ephesite.ens.fr", 18000),
-        ("Helsinki", "finseis.seismo.helsinki.fi", 18000),
-        ("Haiti", "ayiti.unice.fr", 18000),
-        ("ICGC", "ws.icgc.cat", 18000),
-        ("IPGP", "rtserver.ipgp.fr", 18000),
-        ("TexNet", "rtserve.beg.utexas.edu", 18000),
-        ("LMU", "erde.geophysik.uni-muenchen.de", 18000),
-        ("NIGGG", "195.96.231.100", 18000),
-        ("ORFEUS", "eida.orfeus-eu.org", 18000),
-        ("PLSN (IGF Poland)", "hudson.igf.edu.pl", 18000),
-        ("SANET", "147.213.113.73", 18000),
-        ("Thai Meteorological Department", "119.46.126.38", 18000),
-        ("Unical Universita Della Calabria", "www.sismocal.org", 18000),
-        ("UNIV-AGUniversité des Antilles", "seedsrv0.ovmp.martinique.univ-ag.fr", 18000)
-    ]
+    let stations = [
+        Station(name: "AusPass", ipAddress: "auspass.edu.au", port: 18000),
+               Station(name: "GEOFON, GFZ", ipAddress: "geofon.gfz-potsdam.de", port: 18000),
+               Station(name: "GEONET", ipAddress: "link.geonet.org.nz", port: 18000),
+               Station(name: "IDA Project", ipAddress: "rtserve.ida.ucsd.edu", port: 18000),
+               Station(name: "IFZ", ipAddress: "data.ifz.ru", port: 18000),
+               Station(name: "IRIS DMC", ipAddress: "rtserve.iris.washington.edu", port: 18000),
+               Station(name: "IRIS Jamaseis", ipAddress: "jamaseis.iris.edu", port: 18000),
+               Station(name: "ISNET - UNINA Università degli Studi di Napoli Federico II", ipAddress: "185.15.171.86", port: 18000),
+               Station(name: "OBSEBRE", ipAddress: "obsebre.es", port: 18000),
+               Station(name: "OGS", ipAddress: "nam.ogs.it", port: 18000),
+               Station(name: "Oklahoma University", ipAddress: "rtserve.ou.edu", port: 18000),
+               Station(name: "Red Sìsmica Baru", ipAddress: "helis.redsismicabaru.com", port: 18000),
+               Station(name: "RESIF", ipAddress: "rtserve.resif.fr", port: 18000),
+               Station(name: "SCSN-USC (South Carolina Seismic Network)", ipAddress: "eeyore.seis.sc.edu", port: 6382),
+               Station(name: "Seisme IRD", ipAddress: "rtserve.ird.nc", port: 18000),
+               Station(name: "SNAC NOA", ipAddress: "snac.gein.noa.gr", port: 18000),
+               Station(name: "UFRN (Universidade Federal do Rio Grande do Norte)", ipAddress: "sislink.geofisica.ufrn.br", port: 18000),
+               Station(name: "Universidade de Évora", ipAddress: "clv-cge.uevora.pt", port: 18000),
+               Station(name: "UPR", ipAddress: "worm.uprm.edu", port: 18000),
+               Station(name: "NRCAN", ipAddress: "earthquakescanada.nrcan.gc.ca", port: 18000),
+               Station(name: "USGS", ipAddress: "cwbpub.cr.usgs.gov", port: 18000),
+               Station(name: "BGR", ipAddress: "eida.bgr.de", port: 18000),
+               Station(name: "ENS", ipAddress: "ephesite.ens.fr", port: 18000),
+               Station(name: "Helsinki", ipAddress: "finseis.seismo.helsinki.fi", port: 18000),
+               Station(name: "Haiti", ipAddress: "ayiti.unice.fr", port: 18000),
+               Station(name: "ICGC", ipAddress: "ws.icgc.cat", port: 18000),
+               Station(name: "IPGP", ipAddress: "rtserver.ipgp.fr", port: 18000),
+               Station(name: "TexNet", ipAddress: "rtserve.beg.utexas.edu", port: 18000),
+               Station(name: "LMU", ipAddress: "erde.geophysik.uni-muenchen.de", port: 18000),
+               Station(name: "NIGGG", ipAddress: "195.96.231.100", port: 18000),
+               Station(name: "ORFEUS", ipAddress: "eida.orfeus-eu.org", port: 18000),
+               Station(name: "PLSN (IGF Poland)", ipAddress: "hudson.igf.edu.pl", port: 18000),
+               Station(name: "SANET", ipAddress: "147.213.113.73", port: 18000),
+               Station(name: "Thai Meteorological Department", ipAddress: "119.46.126.38", port: 18000),
+               Station(name: "Unical Universita Della Calabria", ipAddress: "www.sismocal.org", port: 18000),
+               Station(name: "UNIV-AGUniversité des Antilles", ipAddress: "seedsrv0.ovmp.martinique.univ-ag.fr", port: 18000)
+           ]
+
+    var body: some View {
+        NavigationView {
+            List(stations) { station in
+                NavigationLink(destination: StationDetailView(station: station), label: {
+                    Text(station.name)
+                })
+            }
+            .navigationTitle("Stations")
+        }
+    }
+}
+
+struct StationDetailView: View {
+    let station: Station
     
     var body: some View {
-        List {
-            Section(header: Text("Station Sources")) {
-                ForEach(stationSources, id: \.0) { source in
-                    NavigationLink(destination: Text(source.1)) {
-                        Text(source.0)
-                    }
-                }
+        VStack {
+            Text("Station Name: \(station.name)")
+            Text("IP Address: \(station.ipAddress)")
+            Text("Port: \(station.port)")
+            Button("Connect") {
+                // Add your connection logic here
             }
-            
-            Section(header: Text("Seedlink Networks")) {
-                ForEach(seedlinkNetworks, id: \.0) { network in
-                    NavigationLink(destination: Text(network.1)) {
-                        Text(network.0)
-                    }
-                }
-            }
+            .padding()
         }
-        .navigationTitle("Data Sources")
+        .navigationTitle("Station Details")
     }
 }
 
